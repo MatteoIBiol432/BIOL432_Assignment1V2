@@ -1,0 +1,65 @@
+---
+title: "Assignment 1 V2"
+author: "Matteo"
+date: "2025-01-07"
+output: html_document
+---
+
+Load Libraries
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+Load and check data
+```{r}
+data <- read.csv("measurements.csv")
+
+head(data)
+```
+Arrange the data based on organism obsever and volume
+```{r}
+sorted_data <- data %>%
+  arrange(Organism, Observer, Volume)
+
+head(sorted_data)
+```
+make table of average volume
+```{r}
+average_volume <- data %>%
+  group_by(Organism) %>%
+  summarise(Average_Volume = mean(Volume))
+
+average_volume
+```
+create table of number of viewings per animal per observer
+```{r}
+observations_table <- data %>%
+  group_by(Observer, Organism) %>%
+  summarise(Number_of_Observations = n())
+
+observations_table
+```
+box plot of animal limb volumes
+```{r}
+ggplot(data, aes(x = Organism, y = Volume, fill = Organism)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Limb Volume Comparison by Species", x = "Species", y = "Limb Volume") + theme(axis.text.x = element_text(size = 5))
+```
+
+Histogram of the distribution of limb volume for each species
+```{r}
+long_data <- data %>%
+  pivot_longer(cols = c(Limb_width, Limb_length, Volume), 
+               names_to = "Measurement", values_to = "Value")
+
+ggplot(long_data, aes(x = Value, fill = Organism)) +
+  geom_histogram(bins = 20, alpha = 0.7) +
+  facet_wrap(~Organism, scales = "free") +
+  theme_minimal() +
+  labs(title = "Distribution of Limb Measurements by Species", x = "Measurement Value", y = "Frequency")
+
+```
+
