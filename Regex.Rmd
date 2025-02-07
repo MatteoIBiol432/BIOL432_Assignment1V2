@@ -1,0 +1,32 @@
+---
+title: "Regex"
+author: "Matteo"
+date: "2025-02-07"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+MData <- read.csv("measurements.csv")
+head(MData)
+```
+
+```{r}
+MData <- MData %>%
+  mutate(Sp = str_replace(Organism, "([A-Za-z])([a-z]+)\\s([a-z]+)", "\\1. \\3"))
+head(MData)
+```
+
+```{r}
+MData_reordered <- MData %>%
+  select(Sp, everything())
+
+write.csv(MData_reordered, "MeasShort.csv", row.names = FALSE)
+
+head(MData_reordered)
+```
+
